@@ -40,8 +40,27 @@ function displayComments(comments)
     {
       let li = document.createElement('li');
       li.innerText = comment['content'];
+      li.id = `${comment['id']}comment`
       ul.appendChild(li);
+      let deleteBtn = document.createElement('btn');
+      deleteBtn.innerText = 'Delete';
+      deleteBtn.id = `${comment['id']}btn`;
+      deleteBtn.addEventListener('click', deleteBtnListener);
+      ul.appendChild(deleteBtn);
+
     })
+}
+
+function deleteBtnListener()
+{
+  event.preventDefault();
+  deleteBtn = event.currentTarget;
+  commentId = parseInt(deleteBtn.id);
+  let comment = document.getElementById(`${commentId}comment`);
+  deleteComment(deleteBtn.id);
+  deleteBtn.parentNode.removeChild(deleteBtn);
+  comment.parentNode.removeChild(comment);
+
 }
 
 function likeThisImage()
@@ -101,4 +120,22 @@ function updateCommentsToDatabase(comment)
     })
       .then(response => response.json())
         .then(data => console.log(data));
+}
+
+function deleteComment(commentId)
+{
+  fetch(`https://randopic.herokuapp.com/comments/${commentId}`,
+    {
+      method: 'DELETE',
+      headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+    }
+
+
+  )
+    .then(response => response.json())
+      .then(data => console.log(data));
+
 }
